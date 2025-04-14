@@ -64,14 +64,20 @@ function ucfT($register_user)
 
   foreach ($_POST['data'] AS $id_ucf => $data)
   {
-    $inserts[] = array(
-      'id_user' => $register_user['id'],
-      'id_ucf' => $id_ucf,
-      'data' => $data,
-    );
+    if (!empty($data))
+    {
+      $inserts[] = array(
+        'id_user' => $register_user['id'],
+        'id_ucf' => $id_ucf,
+        'data' => $data,
+      );
+    }
   }
 
-  mass_inserts(UCFD_TABLE, array_keys($inserts[0]), $inserts);
+  if (count($inserts) > 0)
+  {
+    mass_inserts(UCFD_TABLE, array_keys($inserts[0]), $inserts);
+  }
 }
 
 ?>
