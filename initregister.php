@@ -52,20 +52,26 @@ function ucfinit(){
 }
 
 
-add_event_handler('register_user_check', 'ucfT');
-function ucfT($errors){
-  global $prefixeTable, $conf;
-  if (count($errors) == 0){
-	$next = pwg_db_fetch_assoc(pwg_query("SHOW TABLE STATUS LIKE '".USERS_TABLE."';"));
-	$next_id = $next['Auto_increment'];
-	
-  
-	foreach ($_POST['data'] AS $id_ucf => $data) {
-	  $query = 'INSERT ' . $prefixeTable . 'user_custom_fields_data(id_user,id_ucf,data) VALUES (' . $next_id . ',' . $id_ucf . ',"' . $data . '");';
-	  pwg_query($query);
-	}	
+add_event_handler('register_user', 'ucfT');
+function ucfT($register_user)
+{
+  if (count($_POST['data']) == 0)
+  {
+    return;
   }
-  return $errors;
+
+  $inserts = array();
+
+  foreach ($_POST['data'] AS $id_ucf => $data)
+  {
+    $inserts[] = array(
+      'id_user' => $register_user['id'],
+      'id_ucf' => $id_ucf,
+      'data' => $data,
+    );
+  }
+
+  mass_inserts(UCFD_TABLE, array_keys($inserts[0]), $inserts);
 }
 
 ?>
