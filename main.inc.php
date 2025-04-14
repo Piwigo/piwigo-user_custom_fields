@@ -71,4 +71,14 @@ if (script_basename() == 'admin')
   include_once(dirname(__FILE__).'/initadmin.php');
 }
 
+add_event_handler('delete_user', 'ucf_delete_user');
+function ucf_delete_user($user_id)
+{
+  $query = '
+DELETE
+  FROM '.UCFD_TABLE.'
+  WHERE id_user = '.$user_id.'
+;';
+  pwg_query($query);
+}
 ?>
