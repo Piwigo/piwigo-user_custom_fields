@@ -31,6 +31,11 @@ $lang['Wording'] = 'Wording';
 $lang['Admin only'] = 'Admin only';
 $lang['Obligatory'] = 'Obligatory';
 $lang['Fields List'] = 'Fields List';
+$lang['To get started, add a new custom field.'] = 'To get started, add a new custom field.';
+$lang['Edit a custom field'] = 'Edit a custom field';
+$lang['Are you sure you want to delete the "%s" field?'] = 'Are you sure you want to delete the "%s" field?';
+$lang['Display name'] = 'Display name';
+$lang['Required fields'] = 'Required fields';
 
 /*data user add info*/
 $lang['Import info since Add Info Users'] = 'use Add Info Users to copy its information';

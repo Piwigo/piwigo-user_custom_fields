@@ -31,6 +31,11 @@ $lang['Wording'] = 'Libellé';
 $lang['Admin only'] = 'Seulement l\'administrateur';
 $lang['Obligatory'] = 'Obligatoire';
 $lang['Fields List'] = 'Liste des Champs';
+$lang['To get started, add a new custom field.'] = 'Pour commencer, ajoutez un nouveau champ personnalisé.';
+$lang['Edit a custom field'] = 'Modifier un champ personnalisé';
+$lang['Are you sure you want to delete the "%s" field?'] = 'Êtes-vous sûr de vouloir supprimer le champ "%s" ?';
+$lang['Display name'] = 'Nom d\'affichage';
+$lang['Required fields'] = 'Champs obligatoire';
 
 /*data user add info*/
 $lang['Import info since Add Info Users'] = 'Importer les informations du plugin Add Info Users';
