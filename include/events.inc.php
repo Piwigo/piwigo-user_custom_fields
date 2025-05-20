@@ -9,7 +9,7 @@ function ucf_load_block_in_profile()
   global $template, $user, $conf;
 
   $block = array(
-    'name' => $conf['ucf_config']['ucf_name'],
+    'name' => 'User custom fields',
     'desc' => '',
     'template' => 'plugins/' . UCF_DIR . '/template/ucf_profile_block.tpl',
     'standard_show_save' => true

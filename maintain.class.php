@@ -24,7 +24,6 @@ if (!defined('PHPWG_ROOT_PATH')) die('Hacking attempt!');
 class user_custom_fields_maintain extends PluginMaintain
 {
   private $default_conf = array(
-    'ucf_name' => 'About me',
     'ucf' => array(),
     );
 

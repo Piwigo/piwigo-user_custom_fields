@@ -1,6 +1,6 @@
 $(function() {
   plugin_add_tab_in_user_modal(
-    UCF_NAME,
+    'User custom fields',
     'ucf_area',
     null,
     () => {

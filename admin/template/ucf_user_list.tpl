@@ -1,7 +1,4 @@
 {combine_script id="ucf_user_list" load="footer" path="{$UCF_PATH}admin/js/ucf_user_list.js"}
-{footer_script}
-const UCF_NAME = "{$UCF_NAME}";
-{/footer_script}
 <div id="ucf_area">
   {foreach from=$UCF_FIELDS item=$ucf key=$k_ucf}
     <div class="ucf-userdata" id="{$ucf.id}" data-required="{($ucf.obligatory) ? true : false}">

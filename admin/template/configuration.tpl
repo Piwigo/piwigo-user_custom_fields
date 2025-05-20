@@ -18,71 +18,55 @@ const str_delete_field = "{'Are you sure you want to delete the "%s" field?'|tra
   <h2>{'Manage user custom fields'|@translate}</h2>
 </div>
 <div class="ucf-container">
-  <div class="ucf-name">
-    <p class="ucf-icon-header">
-      <span class="ucf-icon icon-cog-alt icon-blue"></span>
-      <span class="ucf-icon-text">{'Configuration'|translate}</span>
-    </p>
-    <div class="ucf-name">
-      <label class="ucf-name-label" for="ucf_name">{'Display name'|translate|escape:html}</label>
-      <input class="ucf-name-input" type="text" name="ucf_name" id="ucf_name" value="{$UCF_NAME}" />
+  <p class="head-button-2 icon-plus-circled" id="ucf_create_field">{'Create new custom fields'|@translate}</p>
+  <div>
+    <div class="tab-header">
+      <div class="tab-header-wording">
+        <p>{'Wording'|translate}</p>
+      </div>
+      <div class="tab-header-adminonly">
+        <p>{'Admin only'|translate}</p>
+      </div>
+      <div class="tab-header-hide">
+        <p>{'Hide'|translate}</p>
+      </div>
+      <div class="tab-header-obligatory">
+        <p>{'Obligatory'|translate}</p>
+      </div>
+      <div class="tab-header-action">
+      </div>
     </div>
-  </div>
-  <div class="ucf-fields">
-    <p class="ucf-icon-header">
-      <span class="ucf-icon icon-th-list icon-green"></span>
-      <span class="ucf-icon-text">{'Manage custom fields'|translate}</span>
-    </p>
-    <p class="head-button-2 icon-plus-circled" id="ucf_create_field">{'Create new custom fields'|@translate}</p>
-    <div>
-      <div class="tab-header">
-        <div class="tab-header-wording">
-          <p>{'Wording'|translate}</p>
-        </div>
-        <div class="tab-header-adminonly">
-          <p>{'Admin only'|translate}</p>
-        </div>
-        <div class="tab-header-hide">
-          <p>{'Hide'|translate}</p>
-        </div>
-        <div class="tab-header-obligatory">
-          <p>{'Obligatory'|translate}</p>
-        </div>
-        <div class="tab-header-action">
-        </div>
-      </div>
 
-      <div class="loading" id="ucf_loading">
-        <span class="icon-spin6 animate-spin"></span>
-      </div>
-
-      <div class="nofields" id="ufc_no_fields">
-        <p>{'To get started, add a new custom field.'|@translate}</p>
-      </div>
-
-      <div class="tab-body-content" id="tab_body_content">
-        <div class="tab-body ucf-tab-line line" id="ucf_template_line" data-id="-1">
-          <div class="ucf-tab-wording">
-            <i class="icon-grip-vertical-solid"></i>
-            <p></p>
-          </div>
-          <div class="ucf-tab-adminonly">
-            <p></p>
-          </div>
-          <div class="ucf-tab-hide">
-            <p></p>
-          </div>
-          <div class="ucf-tab-obligatory">
-            <p></p>
-          </div>
-          <div class="ucf-tab-action">
-            <p class="icon-pencil ucf-tab-edit" data-id="-1"></p>
-            <p class="icon-trash-1 ucf-tab-delete" data-id="-1"></p>
-          </div>
-        </div>
-      </div>
-
+    <div class="loading" id="ucf_loading">
+      <span class="icon-spin6 animate-spin"></span>
     </div>
+
+    <div class="nofields" id="ufc_no_fields">
+      <p>{'To get started, add a new custom field.'|@translate}</p>
+    </div>
+
+    <div class="tab-body-content" id="tab_body_content">
+      <div class="tab-body ucf-tab-line line" id="ucf_template_line" data-id="-1">
+        <div class="ucf-tab-wording">
+          <i class="icon-grip-vertical-solid"></i>
+          <p></p>
+        </div>
+        <div class="ucf-tab-adminonly">
+          <p></p>
+        </div>
+        <div class="ucf-tab-hide">
+          <p></p>
+        </div>
+        <div class="ucf-tab-obligatory">
+          <p></p>
+        </div>
+        <div class="ucf-tab-action">
+          <p class="icon-pencil ucf-tab-edit" data-id="-1"></p>
+          <p class="icon-trash-1 ucf-tab-delete" data-id="-1"></p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 

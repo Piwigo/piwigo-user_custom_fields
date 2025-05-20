@@ -15,8 +15,7 @@ function ucf_add_tab_users_modal()
     $template->set_filename('ucf_user_list', UCF_REALPATH.'/admin/template/ucf_user_list.tpl');
     $template->assign(array(
       'UCF_PATH' => UCF_PATH,
-      'UCF_FIELDS' => $fields,
-      'UCF_NAME' => $conf['ucf_config']['ucf_name'],
+      'UCF_FIELDS' => $fields
     ));
     $template->parse('ucf_user_list');
   }
