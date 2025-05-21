@@ -64,43 +64,22 @@ $ucf_admin_events = UCF_REALPATH.'/include/admin_events.inc.php';
 $ucf_ws = UCF_REALPATH.'/include/ws_functions.inc.php';
 
 add_event_handler('init', 'ucf_plugin_init');
-// add_event_handler('delete_user', 'ucf_delete_user');
+
 add_event_handler('ws_add_methods', 'ucf_ws_add_methods', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_ws);
 add_event_handler('ws_invoke_allowed', 'ucf_ws_users_setMyInfo', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_ws);
 add_event_handler('ws_users_getList', 'ucf_ws_users_getList', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_ws);
 
 add_event_handler('loc_end_admin', 'ucf_add_tab_users_modal', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_admin_events);
 
-add_event_handler('load_profile_in_template', 'ucf_load_block_in_profile', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_events);
+add_event_handler('loc_end_profile', 'ucf_add_fields_in_template', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_events);
 add_event_handler('save_profile_from_post', 'ucf_profile_save', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_events);
+add_event_handler('loc_end_register', 'ucf_add_fields_in_template', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_events);
+add_event_handler('register_user', 'ucf_register', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_events);
 
 function ucf_plugin_init()
 {
   load_language('plugin.lang', UCF_PATH);
-  global $conf, $template;
-  $template->assign(
-    array(
-	 'UCF_PATH2'=> UCF_PATH,
-	 'UCF_ADMIN2'=> UCF_ADMIN,
-    )
-  );
+  global $conf;
   $conf['ucf_config'] = safe_unserialize($conf['ucf_config']);
 }
-
- //plugin on register
-// if (script_basename() == 'register')
-// {  
-//  include_once(dirname(__FILE__).'/initregister.php');
-// }
-// // Plugin on profile page
-// if (script_basename() == 'profile')  
-// {  
-//  include_once(dirname(__FILE__).'/initprofile.php');
-// }
-
-//   // Plugin for admin
-// if (script_basename() == 'admin')   
-// {
-//   include_once(dirname(__FILE__).'/initadmin.php');
-// }
 ?>

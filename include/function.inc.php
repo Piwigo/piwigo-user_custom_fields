@@ -83,12 +83,12 @@ function ucf_get_userdata_and_fields($user_id)
 /**
  * `User Custom Fields` : sava user data from profile
  */
-function ucf_save_profile($ucf_post)
+function ucf_save_ucf($ucf_post, $from_register=false)
 {
   global $user, $conf;
 
   $ucf_post['user_id'] = $ucf_post['user_id'] ?? $user['id'];
-  if (!is_admin() AND $user['id'] != $ucf_post['user_id'])
+  if (!$from_register AND !is_admin() AND $user['id'] != $ucf_post['user_id'])
   {
     return array(
       'error' => 401,
@@ -96,7 +96,7 @@ function ucf_save_profile($ucf_post)
     );
   }
 
-  if (is_a_guest())
+  if (is_a_guest($ucf_post['user_id']))
   {
     return array(
       'error' => 401,

@@ -345,7 +345,7 @@ function ucf_ws_users_setMyInfo($res, $methodName, $params)
 
   if (isset($_POST['ucf']))
   {
-    $result = ucf_save_profile($_POST);
+    $result = ucf_save_ucf($_POST);
     if (isset($result['error']))
     {
       return new PwgError($result['error'], $result['message']);
