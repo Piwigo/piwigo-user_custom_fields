@@ -373,6 +373,11 @@ function ucf_ws_users_getList($users)
   }
 
   $ucf_columns = array_column($conf['ucf_config']['ucf'], 'column_name');
+  if (empty($ucf_columns))
+  {
+    return $users;
+  }
+
   $query = '
     SELECT
       user_id,
