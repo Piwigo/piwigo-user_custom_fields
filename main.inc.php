@@ -60,7 +60,6 @@ define('UCF_ADMIN',get_root_url().'admin.php?page=plugin-'.UCF_DIR);
 // +-----------------------------------------------------------------------+
 include_once(UCF_PATH . 'include/function.inc.php');
 $ucf_events = UCF_REALPATH.'/include/events.inc.php';
-$ucf_admin_events = UCF_REALPATH.'/include/admin_events.inc.php';
 $ucf_ws = UCF_REALPATH.'/include/ws_functions.inc.php';
 
 add_event_handler('init', 'ucf_plugin_init');
@@ -69,12 +68,16 @@ add_event_handler('ws_add_methods', 'ucf_ws_add_methods', EVENT_HANDLER_PRIORITY
 add_event_handler('ws_invoke_allowed', 'ucf_ws_users_setMyInfo', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_ws);
 add_event_handler('ws_users_getList', 'ucf_ws_users_getList', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_ws);
 
-add_event_handler('loc_end_admin', 'ucf_add_tab_users_modal', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_admin_events);
-
 add_event_handler('loc_end_profile', 'ucf_add_fields_in_template', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_events);
 add_event_handler('save_profile_from_post', 'ucf_profile_save', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_events);
 add_event_handler('loc_end_register', 'ucf_add_fields_in_template', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_events);
 add_event_handler('register_user', 'ucf_register', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_events);
+
+if (defined('IN_ADMIN'))
+{
+  $ucf_admin_events = UCF_REALPATH.'/include/admin_events.inc.php';
+  add_event_handler('loc_end_admin', 'ucf_add_tab_users_modal', EVENT_HANDLER_PRIORITY_NEUTRAL, $ucf_admin_events);
+} 
 
 function ucf_plugin_init()
 {
