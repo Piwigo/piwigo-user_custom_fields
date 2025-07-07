@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: User Custom Fields
-Version: 5.0.0
+Version: auto
 Description: Add User Custom Fields
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=833
 Author: ddtddt
