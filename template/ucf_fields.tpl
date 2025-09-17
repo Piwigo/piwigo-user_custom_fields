@@ -3,7 +3,7 @@
 const USE_STANDARD_PAGE = {($USE_STANDARD_PAGE) ? "true" : "false"}
 {/footer_script}
 <div id="ucf_fields" class="form plugins fields" style="display: none;">
-  {foreach from=$UCF_FIELDS item=$ucf key=$k_ucf}
+  {foreach from=$UCF_FIELDS item=ucf key=k_ucf}
     <div class="ucf_container">
       <label for="ucf_{$ucf.id}">{$ucf.wording} {if $ucf.obligatory}*{/if}</label>
       <div class="ucf_input_container input-container">
