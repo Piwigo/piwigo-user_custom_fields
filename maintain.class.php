@@ -144,7 +144,7 @@ SELECT id_user, id_ucf, data
       foreach ($ucf_data_old as $ucf_data_old_line)
       {
         @$ucf_data_new[$ucf_data_old_line['id_user']]['user_id'] = $ucf_data_old_line['id_user'];
-        $ucf_data_new[$ucf_data_old_line['id_user']][ $database_field[$ucf_data_old_line['id_ucf']] ] = $ucf_data_old_line['data'];
+        $ucf_data_new[$ucf_data_old_line['id_user']][ $database_field[$ucf_data_old_line['id_ucf']] ] = pwg_db_real_escape_string($ucf_data_old_line['data']);
       }
 
       $query = '
