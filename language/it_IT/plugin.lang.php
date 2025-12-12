@@ -36,3 +36,7 @@ $lang['Import was successful'] = 'L\'importazione è un successo';
 $lang['Manage custom fields'] = 'Gestisci campi aggiuntivi';
 $lang['Obligatory'] = 'Obbligatorio';
 $lang['User custom fields'] = 'Campi personalizzati dell\'utente';
+$lang['Display name'] = 'Nome mostrato';
+$lang['Edit a custom field'] = 'Modifica un campo personalizzato';
+$lang['Required fields'] = 'Campi richiesti';
+$lang['To get started, add a new custom field.'] = 'Per iniziare, aggiungi un nuovo campo personalizzato.';
