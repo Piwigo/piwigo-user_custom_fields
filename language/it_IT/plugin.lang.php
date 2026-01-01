@@ -40,3 +40,4 @@ $lang['Display name'] = 'Nome mostrato';
 $lang['Edit a custom field'] = 'Modifica un campo personalizzato';
 $lang['Required fields'] = 'Campi richiesti';
 $lang['To get started, add a new custom field.'] = 'Per iniziare, aggiungi un nuovo campo personalizzato.';
+$lang['Are you sure you want to delete the "%s" field?'] = 'Sei sicuro di voler cancellare il campo "%s"?';
