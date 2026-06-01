@@ -30,6 +30,12 @@ function ucf_register($user)
     $result = ucf_save_ucf($_POST, true);
     if (isset($result['error']))
     {
+      // if ucf_save_ucf return a error we need to delete user
+      if (!defined('IN_ADMIN'))
+      {
+        include_once(PHPWG_ROOT_PATH.'admin/include/functions.php');
+        delete_user($user['id']);
+      }
       $page['errors']['register_page_error'] = $result['message'];
     }
   }

@@ -14,9 +14,11 @@ $(function() {
       const fields = [];
       for (const [key, value] of Object.entries(currentUser[0])) {
         if (key.startsWith('ucf') && $(`#${key}`).length) {
+          const $el = $(`#${key}`);
+          const type = $el.closest('.ucf-userdata').data('type');
           fields.push({
             ucf_id: key.split('_')[1],
-            data: $(`#${key}`).val()
+            data: type === 'checkbox' ? ($el.is(':checked') ? 'true' : 'false') : $el.val()
           });
         }
       }
@@ -47,16 +49,23 @@ $(function() {
     },
     () => {
       // Function to retrieve data from the database via your API method and display it in the user modal tab
-      $('.ucf-userdata input').val('');
+      $('.ucf-userdata input, .ucf-userdata textarea, .ucf-userdata select').val('');
+      $('.ucf-userdata input[type="checkbox"]').prop('checked', false);
       const currentUser = current_users.filter((u) => u.id == last_user_id);
       if (!currentUser.length) {
         console.log('Error get data ucf_area');
         return;
       };
-      
+
       for (const [key, value] of Object.entries(currentUser[0])) {
         if (key.startsWith('ucf') && $(`#${key}`).length) {
-          $(`#${key}`).val(value);
+          const $el = $(`#${key}`);
+          const type = $el.closest('.ucf-userdata').data('type');
+          if (type === 'checkbox') {
+            $el.prop('checked', value === 'true');
+          } else {
+            $el.val(value);
+          }
         }
       }
     }

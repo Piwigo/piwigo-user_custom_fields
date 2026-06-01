@@ -24,6 +24,9 @@ const str_delete_field = "{'Are you sure you want to delete the "%s" field?'|tra
       <div class="tab-header-wording">
         <p>{'Wording'|translate}</p>
       </div>
+      <div class="tab-header-type">
+        <p>{'Type'|translate}</p>
+      </div>
       <div class="tab-header-adminonly">
         <p>{'Admin only'|translate}</p>
       </div>
@@ -49,6 +52,9 @@ const str_delete_field = "{'Are you sure you want to delete the "%s" field?'|tra
       <div class="tab-body ucf-tab-line line" id="ucf_template_line" data-id="-1">
         <div class="ucf-tab-wording">
           <i class="icon-grip-vertical-solid"></i>
+          <p></p>
+        </div>
+        <div class="ucf-tab-type">
           <p></p>
         </div>
         <div class="ucf-tab-adminonly">
@@ -84,6 +90,40 @@ const str_delete_field = "{'Are you sure you want to delete the "%s" field?'|tra
         <label class="ucf-modal-field-label" for="ucf_wording">{'Wording'|translate}</label>
         <input class="ucf-modal-input" type="text" name="ucf_wording" id="ucf_wording" />
       </div>
+
+      <div class="ucf-modal-field user-property-select-container">
+        <label class="ucf-modal-field-label" for="ucf_type">{'Type'|translate}
+          <span class="icon-help-circled tiptip cursor-help" title="{'Once the type is set, it cannot be changed afterwards.'|translate}"></span>
+        </label>
+        <select name="ucf_type" id="ucf_type" class="user-property-select">
+          {foreach from=$UCF_ALLOWED_TYPE item=type}
+            <option value="{$type}">{"ucf_$type"|translate}</option>
+          {/foreach}
+        </select>
+
+        {* select option *}
+        <div class="ucf-select-options" id="ucf_select_options" style="display: none;">
+          <div class="ucf-modal-add-option">
+            <input class="ucf-modal-input" id="ucf_add_option_input" />
+            <p class="ucf-modal-save ucf-modal-save-option icon-plus" id="ucf_add_select_options"></p>
+          </div>
+          <div class="ucf-select-options-list">
+            <p class="ucf-no-options" id="ucf_no_options">{"Please add an option"|translate}</p>
+            
+            <div id="ucf_option_line_template" class="line ucf-option-line" style="display: none;">
+              <p class="ucf-option-line-label"></p>
+              <div class="ucf-option-line-action">
+                <p class="icon-pencil ucf-tab-edit"></p>
+                <p class="icon-trash-1 ucf-tab-delete"></p>
+              </div>
+            </div>
+
+            <div id="ucf_options_list"></div>
+
+          </div>
+        </div>
+      </div>
+
       <div>
         <label class="switch">
           <input type="checkbox" name="ucf_adminonly" id="ucf_adminonly">

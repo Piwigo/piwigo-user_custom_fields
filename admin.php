@@ -20,7 +20,8 @@ $tabsheet->assign();
 
 $template->assign(array(
   'UCF_PATH'=> UCF_PATH,
-  'UCF_REALPATH'=> realpath(UCF_REALPATH)
+  'UCF_REALPATH'=> realpath(UCF_REALPATH),
+  'UCF_ALLOWED_TYPE' => $conf['ucf_config']['allowed_type'],
 ));
 $template->set_filename('ucf_plugin_content', UCF_REALPATH . '/admin/template/configuration.tpl');
 $template->assign_var_from_handle('ADMIN_CONTENT', 'ucf_plugin_content');

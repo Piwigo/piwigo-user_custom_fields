@@ -58,9 +58,24 @@
 .tab-header,
 .tab-body {
     display: grid;
-    grid-template-columns: 2fr 1.5fr 1fr 1fr 0.5fr;
+    grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr 0.5fr;
     text-align: start;
     width: 100%;
+}
+
+.ucf-modal-field .user-property-select {
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  border: none;
+  width: 100%;
+  padding: 10px;
+  font-size: 1.1em;
+  border-radius: 2px;
+}
+
+.user-property-select-container::before {
+  margin-top: 33px;
+  margin-left: 375px;
 }
 
 .tab-header > div,
@@ -102,7 +117,8 @@
   justify-content: end;
 }
 
-.ucf-tab-action p:hover {
+.ucf-tab-action p:hover,
+.ucf-option-line-action p:hover {
   cursor: pointer;
   color: #FF7700;
 }
@@ -143,6 +159,50 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.ucf-modal-add-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ucf-modal-add-option input {
+  max-width: 200px;
+}
+
+.ucf-modal-save-option {
+  padding: 6px !important;
+  border-radius: 2px;
+}
+
+.ucf-select-options,
+.ucf-select-options-list {
+  margin-top: 10px;
+}
+
+.ucf-option-line {
+  border-radius: 5px;
+  height: 30px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ucf-option-line-action {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ucf-select-options-list {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.ucf-no-options {
+  justify-self: center;
 }
 
 .ucf-icon-header .ufc-icon {

@@ -25,6 +25,7 @@ class user_custom_fields_maintain extends PluginMaintain
 {
   private $default_conf = array(
     'ucf' => array(),
+    'allowed_type' => array('text', 'select', 'textarea', 'checkbox', 'date'),
     );
 
   function __construct($plugin_id)
@@ -41,7 +42,30 @@ class user_custom_fields_maintain extends PluginMaintain
       conf_update_param('ucf_config', $this->default_conf, true);
     }
 
+    // migrate from the older conf v15.0.d to the new v16.a+
     $this->ucf_get_old_conf_and_cleanup();
+    $ucf_config = safe_unserialize($conf['ucf_config']);
+    
+    // migration: add type (with text as default value) in each ucf_config
+    if (count($ucf_config['ucf']) > 0)
+    {
+      foreach($ucf_config['ucf'] as $i => $curr_conf)
+      {
+        if (!isset($curr_conf['type']))
+        {
+          $ucf_config['ucf'][$i]['type'] = 'text';
+        }
+      }
+    }
+
+    // migration: add allowed_type in ucf_config
+    if (!isset($ucf_config['allowed_type']))
+    {
+      $ucf_config['allowed_type'] = $this->default_conf['allowed_type'];
+    }
+
+    // save migration ucf_config
+    conf_update_param('ucf_config', $ucf_config, true);
   }
 
   /**

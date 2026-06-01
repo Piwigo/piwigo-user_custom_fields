@@ -26,11 +26,26 @@ function ucfProfileEvent() {
     e.stopImmediatePropagation(); // to prevent the original click from profile.js
     const values = {};
     const email = $('#email').val();
-    UCF_FIELDS.find('input').each((i, element) => {
+    UCF_FIELDS.find('input.ucf-id').each((i, element) => {
       const el = $(element);
-      const inputName = el.attr('name');
-      const inputValue = el.val();
-      values[inputName] = inputValue;
+      const ucf_id = el.val();
+      const ucf_id_name = el.attr('name');
+      const ucf_value_name = $(`#ucf_${ucf_id}`).attr('name');
+      const ucf_type = el.data('type');
+
+      let value;
+      switch (ucf_type) {
+        case 'checkbox':
+          value = $(`#ucf_${ucf_id}`).is(':checked') ? 'true' : 'false';
+          break;
+
+        default:
+          value = $(`#ucf_${ucf_id}`).val();
+          break;
+      }
+
+      values[ucf_id_name] = ucf_id;
+      values[ucf_value_name] = value;
     });
 
     setInfos({ ...values, email });

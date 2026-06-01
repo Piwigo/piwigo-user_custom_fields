@@ -21,7 +21,8 @@
 }
 
 .ucf-modal-input,
-.ucf-name-input {
+.ucf-name-input,
+.ucf-modal-field .user-property-select  {
   background-color: #252525 !important;
 }
 

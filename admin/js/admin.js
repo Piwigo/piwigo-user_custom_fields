@@ -5,15 +5,23 @@
 let ucf_data = [];
 let in_edit = false;
 let is_clicked = false;
+let editing_option_id = null;
 const ucf_modal = $('#ucf_modal');
 const ucf_loading = $('#ucf_loading');
 const ucf_no_fields = $('#ufc_no_fields');
 const ucf_template = $('#ucf_template_line');
 const ucf_line_content = $('#tab_body_content');
 const ucf_wording = $('#ucf_wording');
+const ucf_type = $('#ucf_type');
 const ucf_active = $('#ucf_hide');
 const ucf_adminonly = $('#ucf_adminonly');
 const ucf_obligatory = $('#ucf_obligatory');
+const ucf_select_options = $('#ucf_select_options');
+const ucf_add_select_options = $('#ucf_add_select_options');
+const ucf_add_option_input = $('#ucf_add_option_input');
+const ucf_option_line_template = $('#ucf_option_line_template');
+const ucf_no_options = $('#ucf_no_options');
+const ucf_options_list = $('#ucf_options_list');
 
 const ucf_modal_error = $('#ucf_modal_error');
 const ucf_modal_title = $('#ufc_modal_title');
@@ -31,6 +39,13 @@ const ucf_delete_btn = $('#ucf_delete_btn');
 
 $(function () {
   $('#ucf_create_field').on('click', function () {
+    ucf_type.on('change', function() {
+      if ($(this).val() === 'select') {
+        ucfShowAndSetSelectOptions();
+      } else {
+        ucfHideSelectOptions();
+      }
+    });
     ucfOpenModal();
   });
 
@@ -49,6 +64,10 @@ $(function () {
     }
 
     if (e.key === 'Enter' && ucf_modal.is(':visible')) {
+      if (ucf_add_option_input.is(':focus')) {
+        ucf_add_select_options.trigger('click');
+        return;
+      }
       ucf_modal_save.trigger('click');
     }
   });
@@ -62,10 +81,15 @@ $(function () {
     is_clicked = true;
     const values = {
       wording: ucf_wording.val(),
+      type: ucf_type.val(),
       order_ucf: 1,
       active: !ucf_active.is(':checked'),
       adminonly: ucf_adminonly.is(':checked'),
       obligatory: ucf_obligatory.is(':checked')
+    }
+
+    if (values.type === 'select') {
+      values.select_options = ucfGetSelectOptions();
     }
 
     if (values.wording == '') {
@@ -112,29 +136,46 @@ function ucfCloseModal() {
 function ucfOpenModal() {
   ucf_modal.fadeIn();
   ucf_wording.trigger('focus');
+  
 }
 
 function ucfResetModal() {
   ucf_wording.val('');
+  ucf_type.val('text');
   ucf_active.prop('checked', false);
   ucf_adminonly.prop('checked', false);
   ucf_obligatory.prop('checked', false);
 
   in_edit = false;
+  editing_option_id = null;
   ucf_modal_title.html(str_modal_title_new);
   ucf_modal_icon.removeClass('icon-pencil').addClass('icon-plus-circled');
+  ucf_type.attr('disabled', false);
+  ucf_type.off('change');
+
+  ucf_select_options.hide();
+  ucf_no_options.show();
+  ucf_options_list.empty();
 
   ucfModalHideError();
 }
 
 function ucfFillAndOpenModal(ucf) {
   ucf_wording.val(ucf.wording);
+  ucf_type.val(ucf.type ?? '(text)');
   ucf_active.prop('checked', !Number(ucf.active) ? true : false);
   ucf_adminonly.prop('checked', Number(ucf.adminonly) ? true : false);
   ucf_obligatory.prop('checked', Number(ucf.obligatory) ? true : false);
 
   ucf_modal_title.html(str_modal_title_edit);
   ucf_modal_icon.removeClass('icon-plus-circled').addClass('icon-pencil');
+  ucf_type.attr('disabled', true);
+  ucf_type.off('change');
+
+  if (ucf.type === 'select') {
+    ucfShowAndSetSelectOptions();
+    (ucf.options ?? []).forEach((o) => ucfAddOption(o));
+  }
 
   in_edit = ucf.id;
   ucfOpenModal();
@@ -176,6 +217,7 @@ function ucfDisplayFields(data) {
     template.find('.ucf-tab-delete').attr('data-id', ucf.id);
 
     template.find('.ucf-tab-wording p').text(ucf.wording);
+    template.find('.ucf-tab-type p').text(ucf.type ?? '(text)');
     template.find('.ucf-tab-adminonly p').html(Number(ucf.adminonly) ? str_yes : str_no);
     template.find('.ucf-tab-hide p').html(!Number(ucf.active) ? str_yes : str_no);
     template.find('.ucf-tab-obligatory p').html(Number(ucf.obligatory) ? str_yes : str_no);
@@ -208,6 +250,7 @@ function ucfEditDisplayedField(ucf) {
   if (i !== -1) ucf_data[i] = ucf;
   const line = $(`#ucf_${ucf.id}`);
   line.find('.ucf-tab-wording p').text(ucf.wording);
+  line.find('.ucf-tab-type p').text(ucf.type);
   line.find('.ucf-tab-adminonly p').html(Number(ucf.adminonly) ? str_yes : str_no);
   line.find('.ucf-tab-hide p').html(!Number(ucf.active) ? str_yes : str_no);
   line.find('.ucf-tab-obligatory p').html(Number(ucf.obligatory) ? str_yes : str_no);
@@ -225,6 +268,61 @@ function ucfFillAndOpenDeleteModal(ucf) {
 function ucfCloseDeleteModal() {
   ucf_delete_btn.off('click');
   ucf_delete_modal.fadeOut();
+}
+
+function ucfShowAndSetSelectOptions() {
+  ucf_add_select_options.off('click').on('click', function() {
+    const value = ucf_add_option_input.val();
+    if (!value || '' === value) return;
+    ucfAddOption({ id: editing_option_id, label: value });
+    editing_option_id = null;
+    ucf_add_option_input.val('').trigger('focus');
+  });
+  ucf_select_options.show();
+}
+
+function ucfHideSelectOptions() {
+  ucf_select_options.hide();
+  ucf_add_select_options.off('click');
+}
+
+function ucfAddOption(option) {
+  const line = ucf_option_line_template.clone();
+  line.attr('data-option-id', option.id ?? '');
+  line.find('.ucf-option-line-label').text(option.label);
+  ucf_no_options.hide();
+  line.removeAttr('style id').appendTo(ucf_options_list);
+
+  line.find('.ucf-tab-edit').on('click', function() {
+    ucfEditOption(line);
+  });
+  line.find('.ucf-tab-delete').on('click', function() {
+    ucfDeleteOption(line);
+  });
+}
+
+function ucfEditOption(line) {
+  editing_option_id = line.attr('data-option-id') || null;
+  ucf_add_option_input.val(line.find('.ucf-option-line-label').text()).trigger('focus');
+  ucfDeleteOption(line);
+}
+
+function ucfDeleteOption(line) {
+  line.remove();
+  if (ucf_options_list.find('.ucf-option-line').length === 0) {
+    ucf_no_options.show();
+  }
+}
+
+function ucfGetSelectOptions() {
+  const options = [];
+  ucf_options_list.find('.ucf-option-line').each(function() {
+    options.push({
+      id: $(this).attr('data-option-id') || null,
+      label: $(this).find('.ucf-option-line-label').text()
+    });
+  });
+  return options;
 }
 
 // +-----------------------------------------------------------------------+

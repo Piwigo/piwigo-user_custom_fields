@@ -12,6 +12,9 @@ function ucf_ws_add_methods($arr)
       'wording' => array(
         'info' => 'Name of field'
       ),
+      'type' => array(
+        'info' => 'Type of field',
+      ),
       'order_ucf' => array(
         'type' => WS_TYPE_INT | WS_TYPE_NOTNULL,
         'info' => 'Field order'
@@ -27,7 +30,11 @@ function ucf_ws_add_methods($arr)
       'obligatory' => array(
         'type' => WS_TYPE_BOOL,
         'info' => 'The field is required or not'
-      )
+      ),
+      'select_options' => array(
+        'info' => 'Options when type is select',
+        'flags' => WS_PARAM_FORCE_ARRAY | WS_PARAM_OPTIONAL,
+      ),
     ),
     'Create new custom fields',
     null,
@@ -82,7 +89,11 @@ function ucf_ws_add_methods($arr)
         'type' => WS_TYPE_BOOL,
         'info' => 'The field is required or not',
         'flags' => WS_PARAM_OPTIONAL
-      )
+      ),
+      'select_options' => array(
+        'info' => 'Options when type is select',
+        'flags' => WS_PARAM_FORCE_ARRAY | WS_PARAM_OPTIONAL,
+      ),
     ),
     'Edit new custom fields',
     null,
@@ -137,12 +148,18 @@ function ucf_create_field($params, &$service)
 {
   global $conf;
 
+  if (!in_array($params['type'], $conf['ucf_config']['allowed_type']))
+  {
+    return new PwgError(422, 'Type must be: ' . implode(' ,', $conf['ucf_config']['allowed_type']));
+  }
+
   $new_id = bin2hex(random_bytes(5));
   $column_name = 'ucf_' . $new_id;
 
   $new_conf = array(
     'id' => $new_id,
     'wording' => pwg_db_real_escape_string($params['wording']),
+    'type' => $params['type'],
     'order_ucf' => $params['order_ucf'],
     'active' => $params['active'],
     'adminonly' => $params['adminonly'],
@@ -150,14 +167,37 @@ function ucf_create_field($params, &$service)
     'column_name' => $column_name
   );
 
-  $conf['ucf_config']['ucf'][] = $new_conf;
+  if ('select' === $params['type'])
+  {
+    if (empty($params['select_options']))
+    {
+      return new PwgError(422, 'Please add an option');
+    }
 
-  conf_update_param('ucf_config', $conf['ucf_config'], true);
+    foreach($params['select_options'] as $option)
+    {
+      if (empty($option['label']) || '' === trim($option['label']))
+      {
+        continue;
+      }
+
+      $new_conf['options'][] = array(
+        'id' => bin2hex(random_bytes(5)),
+        'label' => pwg_db_real_escape_string($option['label']),
+      );
+    }
+  }
+
+  $conf['ucf_config']['ucf'][] = $new_conf;
+  $column_type = ucf_get_column_type($params['type']);
   $query = '
 ALTER TABLE `'.USER_INFOS_TABLE.'` 
-  ADD COLUMN `' . $column_name . '` VARCHAR(255) DEFAULT NULL
+  ADD COLUMN `' . $column_name . '` '.$column_type.'
 ;';
+
+  // save
   pwg_query($query);
+  conf_update_param('ucf_config', $conf['ucf_config'], true);
 
   return $new_conf;
 }
@@ -182,16 +222,62 @@ function ucf_edit_field($params, &$service)
 
   if (false === $current_index_ucf)
   {
-    return new PwgError(401, 'Field not found!');
+    return new PwgError(404, 'Field not found!');
   }
 
   $ucf[ $current_index_ucf ] = array_merge($ucf[ $current_index_ucf ], array(
-    'wording' => $params['wording'] ?? pwg_db_real_escape_string($ucf[ $current_index_ucf ]['wording']),
+    'wording' => isset($params['wording'])
+      ? pwg_db_real_escape_string($params['wording'])
+      : $ucf[ $current_index_ucf ]['wording'],
     'order_ucf' => $params['order_ucf'] ?? $ucf[ $current_index_ucf ]['order_ucf'],
     'active' => $params['active'] ?? $ucf[ $current_index_ucf ]['active'],
     'adminonly' => $params['adminonly'] ?? $ucf[ $current_index_ucf ]['adminonly'],
     'obligatory' => $params['obligatory'] ?? $ucf[ $current_index_ucf ]['obligatory']
   ));
+
+  if ('select' === $ucf[ $current_index_ucf ]['type'])
+  {
+    if (empty($params['select_options']))
+    {
+      return new PwgError(422, 'Please add an option');
+    }
+
+    $existing_by_id = array_column($ucf[ $current_index_ucf ]['options'] ?? array(), null, 'id');
+    $new_options = array();
+
+    foreach ($params['select_options'] as $option)
+    {
+      if (empty($option['label']) || '' === trim($option['label']))
+      {
+        continue;
+      }
+
+      if (!empty($option['id']))
+      {
+        if (!isset($existing_by_id[$option['id']]))
+        {
+          return new PwgError(422, 'Unknown option id: '.$option['id']);
+        }
+        $option_id = $option['id'];
+      }
+      else
+      {
+        $option_id = bin2hex(random_bytes(5));
+      }
+
+      $new_options[] = array(
+        'id' => $option_id,
+        'label' => pwg_db_real_escape_string($option['label']),
+      );
+    }
+
+    if (empty($new_options))
+    {
+      return new PwgError(422, 'Please add an option');
+    }
+
+    $ucf[ $current_index_ucf ]['options'] = $new_options;
+  }
 
   $conf['ucf_config']['ucf'] = $ucf;
 
@@ -259,75 +345,6 @@ function ucf_sort_fields($params, &$service)
   $conf['ucf_config']['ucf'] = $ucf;
   conf_update_param('ucf_config', $conf['ucf_config'], true);
   return 'The user custom field has been sorted successfully';
-}
-
-/**
- * `User Custom Fields` : edit UserField
- */
-function ucf_edit_user_field($params, &$service)
-{
-  global $user, $conf;
-
-  if (!is_admin() AND $user['id'] != $params['user_id'])
-  {
-    return new PwgError(401, 'Access Denied');
-  }
-
-  $ucf = $conf['ucf_config']['ucf'];
-  $ucf_data_new = array();
-  $database_field = array();
-  foreach ($params['ucf'] as $field)
-  {
-    if (!isset($field['ucf_id']) OR !isset($field['data']))
-    {
-      return new PwgError(WS_ERR_INVALID_PARAM, 'Missing ucf_id or data params');
-    }
-
-    if (strlen($field['data']) > 255)
-    {
-      return new PwgError(WS_ERR_INVALID_PARAM, 'Data field for `'.$field['ucf_id'].'` is to long (max 255 character)');
-    }
-
-    $current_index_ucf = array_search($field['ucf_id'], array_column($ucf, 'id'));
-    if (false === $current_index_ucf)
-    {
-      return new PwgError(401, 'Field not found!');
-    }
-
-    if ($ucf[ $current_index_ucf ][ 'obligatory' ])
-    {
-      if (empty($field['data']) OR null == $field['data'])
-      {
-        return new PwgError(WS_ERR_INVALID_PARAM, '`'.$ucf[ $current_index_ucf ][ 'wording' ].'` is required');
-      }
-    }
-
-    if (!$ucf[ $current_index_ucf ][ 'active' ])
-    {
-      return new PwgError(WS_ERR_INVALID_PARAM, 'Cannot update unactive field');
-    }
-
-    if (!is_admin() and $ucf[ $current_index_ucf ][ 'adminonly' ])
-    {
-      return new PwgError(WS_ERR_INVALID_PARAM, '`'.$ucf[ $current_index_ucf ][ 'wording' ].'` is onlyadmin field');
-    }
-
-    $current_column_name = $ucf[ $current_index_ucf ][ 'column_name' ];
-
-    $field['data'] = pwg_db_real_escape_string($field['data']);
-
-    @$ucf_data_new[$params['user_id']]['user_id'] = $params['user_id'];
-    $ucf_data_new[$params['user_id']][$current_column_name] = pwg_db_real_escape_string($field['data']);
-    $database_field[$current_column_name] = 1;
-  }
-
-  mass_updates(
-    USER_INFOS_TABLE,
-    array('primary' => array('user_id'), 'update' => array_keys($database_field)),
-    $ucf_data_new
-  );
-
-  return 'The user custom field has been updated successfully';
 }
 
 /**

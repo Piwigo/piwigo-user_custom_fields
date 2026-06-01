@@ -43,3 +43,10 @@ $lang['Import'] = 'Import';
 $lang['Import was successful'] = 'L\'import est un succès';
 
 $lang['Manage custom fields'] = 'Gérer les champs additionnels ';
+$lang['Once the type is set, it cannot be changed afterwards.'] = 'Une fois le type défini, il ne peut plus être modifié.';
+$lang['ucf_text'] = 'Texte';
+$lang['ucf_textarea'] = 'Texte multiligne';
+$lang['ucf_select'] = 'Liste';
+$lang['ucf_checkbox'] = 'Case à cocher';
+$lang['ucf_date'] = 'Date';
+$lang['Please add an option'] = 'Veuillez ajouter une option';

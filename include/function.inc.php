@@ -112,16 +112,8 @@ function ucf_save_ucf($ucf_post, $from_register=false)
     if (!isset($field['ucf_id']) OR !isset($field['data']))
     {
       return array(
-        'error' => WS_ERR_INVALID_PARAM,
+        'error' => 1003,
         'message' => 'Missing ucf_id or data params'
-      );
-    }
-
-    if (strlen($field['data']) > 255)
-    {
-      return array(
-        'error' => WS_ERR_INVALID_PARAM,
-        'message' => 'Data field for `'.$field['ucf_id'].'` is to long (max 255 character)'
       );
     }
 
@@ -134,12 +126,24 @@ function ucf_save_ucf($ucf_post, $from_register=false)
       );
     }
 
+    $current_type = $ucf[ $current_index_ucf ][ 'type' ];
+    $ucf_validation = ucf_validate_type($ucf[ $current_index_ucf ], $field);
+    if (null !== $ucf_validation)
+    {
+      return $ucf_validation; // error
+    }
+
     if ($ucf[ $current_index_ucf ][ 'obligatory' ])
     {
-      if (empty($field['data']) OR null == $field['data'])
+      // for checkbox, "obligatory" means must be checked (e.g. accept terms/GDPR)
+      $is_empty = 'checkbox' === $current_type
+        ? 'true' !== $field['data']
+        : (empty($field['data']) || null === $field['data']);
+
+      if ($is_empty)
       {
         return array(
-          'error' => WS_ERR_INVALID_PARAM,
+          'error' => 1003,
           'message' => '`'.$ucf[ $current_index_ucf ][ 'wording' ].'` is required'
         );
       }
@@ -148,7 +152,7 @@ function ucf_save_ucf($ucf_post, $from_register=false)
     if (!$ucf[ $current_index_ucf ][ 'active' ])
     {
       return array(
-        'error' => WS_ERR_INVALID_PARAM,
+        'error' => 1003,
         'message' => 'Cannot update unactive field'
       );
     }
@@ -156,7 +160,7 @@ function ucf_save_ucf($ucf_post, $from_register=false)
     if (!is_admin() and $ucf[ $current_index_ucf ][ 'adminonly' ])
     {
       return array(
-        'error' => WS_ERR_INVALID_PARAM,
+        'error' => 1003,
         'message' => '`'.$ucf[ $current_index_ucf ][ 'wording' ].'` is onlyadmin field'
       );
     }
@@ -166,7 +170,7 @@ function ucf_save_ucf($ucf_post, $from_register=false)
     $field['data'] = pwg_db_real_escape_string($field['data']);
 
     @$ucf_data_new[$ucf_post['user_id']]['user_id'] = $ucf_post['user_id'];
-    $ucf_data_new[$ucf_post['user_id']][$current_column_name] = pwg_db_real_escape_string($field['data']);
+    $ucf_data_new[$ucf_post['user_id']][$current_column_name] = $field['data'];
     $database_field[$current_column_name] = 1;
   }
 
@@ -176,4 +180,92 @@ function ucf_save_ucf($ucf_post, $from_register=false)
     $ucf_data_new
   );
   return true;
+}
+
+function ucf_get_column_type($type)
+{
+  $column_type = 'VARCHAR(255) DEFAULT NULL';
+  switch ($type) {
+    case 'textarea':
+      $column_type = 'TEXT DEFAULT NULL';
+      break;
+
+    case 'checkbox':
+      $column_type = 'enum(\'true\',\'false\') default \'false\'';
+      break;
+
+    case 'date':
+      $column_type = 'DATE DEFAULT NULL';
+      break;
+    
+    default:
+      $column_type = 'VARCHAR(255) DEFAULT NULL';
+      break;
+  }
+
+  return $column_type;
+}
+
+function ucf_validate_type($ucf_field, $field)
+{
+  $error = null;
+  $type = $ucf_field['type'];
+  $wording = $ucf_field['wording'];
+
+  if (!isset($field['data']) || '' === $field['data'])
+  {
+    return null;
+  }
+
+  switch ($type) {
+    case 'text':
+      if (strlen($field['data']) > 255)
+      {
+        $error = array(
+          'error' => 1003,
+          'message' => 'Data field for `'.$wording.'` is to long (max 255 character)'
+        );
+      }
+      break;
+
+    case 'textarea':
+      break;
+
+    case 'checkbox':
+      if ( ($value = filter_var($field['data'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)) === null )
+      {
+        $error = array(
+          'error' => 1003,
+          'message' => '`'.$wording.'` must only contain booleans'
+        );
+      }
+      break;
+
+    case 'date':
+      $date = DateTime::createFromFormat('Y-m-d', $field['data']);
+      if (!$date || $date->format('Y-m-d') !== $field['data'])
+      {
+        $error = array(
+          'error' => 1003,
+          'message' => '`'.$wording.'` must be a valid date (YYYY-MM-DD)'
+        );
+      }
+      break;
+
+    case 'select':
+      $valid_ids = array_column($ucf_field['options'] ?? array(), 'id');
+      if (!in_array($field['data'], $valid_ids, true))
+      {
+        $error = array(
+          'error' => 1003,
+          'message' => '`'.$wording.'` has an invalid option'
+        );
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  return $error;
 }
