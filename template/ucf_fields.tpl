@@ -25,6 +25,7 @@ const USE_STANDARD_PAGE = {($USE_STANDARD_PAGE) ? "true" : "false"}
           <textarea 
             resize="false"
             rows="8"
+            class="form-control"
             name="ucf[{$k_ucf}][data]"
             id="ucf_{$ucf.id}"
             {if $ucf.obligatory}required{/if}
@@ -39,6 +40,7 @@ const USE_STANDARD_PAGE = {($USE_STANDARD_PAGE) ? "true" : "false"}
         <input type="hidden" class="ucf-id" name="ucf[{$k_ucf}][ucf_id]" value="{$ucf.id}" data-type="{$ucf.type}" />
         <input type="hidden" name="ucf[{$k_ucf}][data]" value="false" />
         <input
+          class="form-control"
           style="width: unset;"
           type="checkbox"
           name="ucf[{$k_ucf}][data]"
@@ -75,7 +77,8 @@ const USE_STANDARD_PAGE = {($USE_STANDARD_PAGE) ? "true" : "false"}
         <label for="ucf_{$ucf.id}">{$ucf.wording} {if $ucf.obligatory}*{/if}</label>
         <div class="ucf_input_container input-container">
           <input type="hidden" class="ucf-id" name="ucf[{$k_ucf}][ucf_id]" value="{$ucf.id}" data-type="{$ucf.type}" />
-          <select 
+          <select
+            class="form-control"
             name="ucf[{$k_ucf}][data]"
             id="ucf_{$ucf.id}"
           >
