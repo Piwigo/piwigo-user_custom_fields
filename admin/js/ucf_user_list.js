@@ -36,13 +36,13 @@ $(function() {
           if (res.stat == 'ok') {
             // all good
           } else {
-            $("#UserList .update-user-fail").html(res.message ?? errorStr);
+            $("#UserList .update-user-fail").text(res.message ?? errorStr);
             $("#UserList .update-user-fail").fadeIn();
           }
         },
         error: function(e) {
           console.log(e);
-          $("#UserList .update-user-fail").html(e.responseJSON?.message ?? errorStr);
+          $("#UserList .update-user-fail").text(e.responseJSON?.message ?? errorStr);
           $("#UserList .update-user-fail").fadeIn();
         }
       });

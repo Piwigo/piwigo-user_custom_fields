@@ -167,7 +167,7 @@ function ucf_save_ucf($ucf_post, $from_register=false)
 
     $current_column_name = $ucf[ $current_index_ucf ][ 'column_name' ];
 
-    $field['data'] = pwg_db_real_escape_string($field['data']);
+    // no escaping: $_POST is already addslashes-ed and mass_updates does not escape
 
     @$ucf_data_new[$ucf_post['user_id']]['user_id'] = $ucf_post['user_id'];
     $ucf_data_new[$ucf_post['user_id']][$current_column_name] = $field['data'];

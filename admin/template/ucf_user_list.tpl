@@ -2,7 +2,7 @@
 <div id="ucf_area">
   {foreach from=$UCF_FIELDS item=ucf key=k_ucf}
     <div class="ucf-userdata" id="{$ucf.id}" data-required="{($ucf.obligatory) ? true : false}" data-type="{$ucf.type}">
-      <p class="user-property-label">{$ucf.wording} {if $ucf.obligatory}*{/if} {if $ucf.adminonly}({"Admin only"|translate|escape:html}){/if}</p>
+      <p class="user-property-label">{$ucf.wording|escape:html} {if $ucf.obligatory}*{/if} {if $ucf.adminonly}({"Admin only"|translate|escape:html}){/if}</p>
 
       {* TYPE => TEXT *}
       {if $ucf.type === 'text'}

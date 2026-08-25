@@ -158,7 +158,7 @@ function ucf_create_field($params, &$service)
 
   $new_conf = array(
     'id' => $new_id,
-    'wording' => pwg_db_real_escape_string($params['wording']),
+    'wording' => stripslashes($params['wording']),
     'type' => $params['type'],
     'order_ucf' => $params['order_ucf'],
     'active' => $params['active'],
@@ -183,7 +183,7 @@ function ucf_create_field($params, &$service)
 
       $new_conf['options'][] = array(
         'id' => bin2hex(random_bytes(5)),
-        'label' => pwg_db_real_escape_string($option['label']),
+        'label' => stripslashes($option['label']),
       );
     }
   }
@@ -227,7 +227,7 @@ function ucf_edit_field($params, &$service)
 
   $ucf[ $current_index_ucf ] = array_merge($ucf[ $current_index_ucf ], array(
     'wording' => isset($params['wording'])
-      ? pwg_db_real_escape_string($params['wording'])
+      ? stripslashes($params['wording'])
       : $ucf[ $current_index_ucf ]['wording'],
     'order_ucf' => $params['order_ucf'] ?? $ucf[ $current_index_ucf ]['order_ucf'],
     'active' => $params['active'] ?? $ucf[ $current_index_ucf ]['active'],
@@ -267,7 +267,7 @@ function ucf_edit_field($params, &$service)
 
       $new_options[] = array(
         'id' => $option_id,
-        'label' => pwg_db_real_escape_string($option['label']),
+        'label' => stripslashes($option['label']),
       );
     }
 

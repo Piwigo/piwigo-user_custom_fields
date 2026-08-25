@@ -7,7 +7,7 @@ const USE_STANDARD_PAGE = {($USE_STANDARD_PAGE) ? "true" : "false"}
     {* TYPE => TEXT *}
     {if $ucf.type === 'text'}
       <div class="ucf_container">
-        <label for="ucf_{$ucf.id}">{$ucf.wording} {if $ucf.obligatory}*{/if}</label>
+        <label for="ucf_{$ucf.id}">{$ucf.wording|escape:html} {if $ucf.obligatory}*{/if}</label>
         <div class="ucf_input_container input-container">
           <input type="hidden" class="ucf-id" name="ucf[{$k_ucf}][ucf_id]" value="{$ucf.id}" data-type="{$ucf.type}" />
           <input name="ucf[{$k_ucf}][data]" id="ucf_{$ucf.id}" type="text" value="{$ucf.data|escape:html}"
@@ -19,7 +19,7 @@ const USE_STANDARD_PAGE = {($USE_STANDARD_PAGE) ? "true" : "false"}
     {* TYPE => TEXTAREA *}
     {if $ucf.type === 'textarea'}
       <div class="ucf_container">
-        <label for="ucf_{$ucf.id}">{$ucf.wording} {if $ucf.obligatory}*{/if}</label>
+        <label for="ucf_{$ucf.id}">{$ucf.wording|escape:html} {if $ucf.obligatory}*{/if}</label>
         <div class="ucf_input_container input-container">
           <input type="hidden" class="ucf-id" name="ucf[{$k_ucf}][ucf_id]" value="{$ucf.id}" data-type="{$ucf.type}" />
           <textarea 
@@ -49,21 +49,21 @@ const USE_STANDARD_PAGE = {($USE_STANDARD_PAGE) ? "true" : "false"}
           {if $ucf.data}checked{/if}
           {if $ucf.obligatory}required{/if}
         >
-        <label for="ucf_{$ucf.id}">{$ucf.wording} {if $ucf.obligatory}*{/if}</label>
+        <label for="ucf_{$ucf.id}">{$ucf.wording|escape:html} {if $ucf.obligatory}*{/if}</label>
       </div>
     {/if}
 
     {* TYPE => DATE *}
     {if $ucf.type === 'date'}
       <div class="ucf_container">
-        <label for="ucf_{$ucf.id}">{$ucf.wording} {if $ucf.obligatory}*{/if}</label>
+        <label for="ucf_{$ucf.id}">{$ucf.wording|escape:html} {if $ucf.obligatory}*{/if}</label>
         <div class="ucf_input_container input-container">
           <input type="hidden" class="ucf-id" name="ucf[{$k_ucf}][ucf_id]" value="{$ucf.id}" data-type="{$ucf.type}" />
           <input 
             type="date"
             name="ucf[{$k_ucf}][data]"
             id="ucf_{$ucf.id}"
-            value="{$ucf.data}"
+            value="{$ucf.data|escape:html}"
             {if $ucf.obligatory}required{/if}
           />
         </div>
@@ -74,7 +74,7 @@ const USE_STANDARD_PAGE = {($USE_STANDARD_PAGE) ? "true" : "false"}
     {* TYPE => SELECT *}
     {if $ucf.type === 'select'}
       <div class="ucf_container">
-        <label for="ucf_{$ucf.id}">{$ucf.wording} {if $ucf.obligatory}*{/if}</label>
+        <label for="ucf_{$ucf.id}">{$ucf.wording|escape:html} {if $ucf.obligatory}*{/if}</label>
         <div class="ucf_input_container input-container">
           <input type="hidden" class="ucf-id" name="ucf[{$k_ucf}][ucf_id]" value="{$ucf.id}" data-type="{$ucf.type}" />
           <select

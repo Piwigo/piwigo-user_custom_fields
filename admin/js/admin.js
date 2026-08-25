@@ -148,7 +148,7 @@ function ucfResetModal() {
 
   in_edit = false;
   editing_option_id = null;
-  ucf_modal_title.html(str_modal_title_new);
+  ucf_modal_title.text(str_modal_title_new);
   ucf_modal_icon.removeClass('icon-pencil').addClass('icon-plus-circled');
   ucf_type.attr('disabled', false);
   ucf_type.off('change');
@@ -167,7 +167,7 @@ function ucfFillAndOpenModal(ucf) {
   ucf_adminonly.prop('checked', Number(ucf.adminonly) ? true : false);
   ucf_obligatory.prop('checked', Number(ucf.obligatory) ? true : false);
 
-  ucf_modal_title.html(str_modal_title_edit);
+  ucf_modal_title.text(str_modal_title_edit);
   ucf_modal_icon.removeClass('icon-plus-circled').addClass('icon-pencil');
   ucf_type.attr('disabled', true);
   ucf_type.off('change');
@@ -182,7 +182,7 @@ function ucfFillAndOpenModal(ucf) {
 }
 
 function ucfModalShowError(message) {
-  ucf_modal_error.html(message);
+  ucf_modal_error.text(message);
   ucf_modal_error.removeClass('ucf-hidden');
   is_clicked = false;
 }
@@ -218,9 +218,9 @@ function ucfDisplayFields(data) {
 
     template.find('.ucf-tab-wording p').text(ucf.wording);
     template.find('.ucf-tab-type p').text(ucf.type ?? '(text)');
-    template.find('.ucf-tab-adminonly p').html(Number(ucf.adminonly) ? str_yes : str_no);
-    template.find('.ucf-tab-hide p').html(!Number(ucf.active) ? str_yes : str_no);
-    template.find('.ucf-tab-obligatory p').html(Number(ucf.obligatory) ? str_yes : str_no);
+    template.find('.ucf-tab-adminonly p').text(Number(ucf.adminonly) ? str_yes : str_no);
+    template.find('.ucf-tab-hide p').text(!Number(ucf.active) ? str_yes : str_no);
+    template.find('.ucf-tab-obligatory p').text(Number(ucf.obligatory) ? str_yes : str_no);
 
     ucf_line_content.append(template);
   });
@@ -251,13 +251,13 @@ function ucfEditDisplayedField(ucf) {
   const line = $(`#ucf_${ucf.id}`);
   line.find('.ucf-tab-wording p').text(ucf.wording);
   line.find('.ucf-tab-type p').text(ucf.type);
-  line.find('.ucf-tab-adminonly p').html(Number(ucf.adminonly) ? str_yes : str_no);
-  line.find('.ucf-tab-hide p').html(!Number(ucf.active) ? str_yes : str_no);
-  line.find('.ucf-tab-obligatory p').html(Number(ucf.obligatory) ? str_yes : str_no);
+  line.find('.ucf-tab-adminonly p').text(Number(ucf.adminonly) ? str_yes : str_no);
+  line.find('.ucf-tab-hide p').text(!Number(ucf.active) ? str_yes : str_no);
+  line.find('.ucf-tab-obligatory p').text(Number(ucf.obligatory) ? str_yes : str_no);
 }
 
 function ucfFillAndOpenDeleteModal(ucf) {
-  ucf_delete_name.html(sprintf(str_delete_field, ucf.wording));
+  ucf_delete_name.text(sprintf(str_delete_field, ucf.wording));
   ucf_delete_modal.fadeIn();
 
   ucf_delete_btn.one('click', function() {
