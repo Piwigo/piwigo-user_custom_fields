@@ -81,6 +81,7 @@ const USE_STANDARD_PAGE = {($USE_STANDARD_PAGE) ? "true" : "false"}
             class="form-control"
             name="ucf[{$k_ucf}][data]"
             id="ucf_{$ucf.id}"
+            {if $ucf.obligatory}required{/if}
           >
               <option value="">----</option>
             {foreach from=$ucf.options item=option}

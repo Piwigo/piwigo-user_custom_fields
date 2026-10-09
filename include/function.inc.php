@@ -104,10 +104,47 @@ function ucf_save_ucf($ucf_post, $from_register=false)
     );
   }
 
+  $ucf_validation = ucf_validate_fields($ucf_post['ucf']);
+  if (null !== $ucf_validation)
+  {
+    return $ucf_validation; // error
+  }
+
   $ucf = $conf['ucf_config']['ucf'];
   $ucf_data_new = array();
   $database_field = array();
   foreach ($ucf_post['ucf'] as $field)
+  {
+    $current_index_ucf = array_search($field['ucf_id'], array_column($ucf, 'id'));
+    $current_column_name = $ucf[ $current_index_ucf ][ 'column_name' ];
+
+    // no escaping: $_POST is already addslashes-ed and mass_updates does not escape
+
+    @$ucf_data_new[$ucf_post['user_id']]['user_id'] = $ucf_post['user_id'];
+    $ucf_data_new[$ucf_post['user_id']][$current_column_name] = $field['data'];
+    $database_field[$current_column_name] = 1;
+  }
+
+  mass_updates(
+    USER_INFOS_TABLE,
+    array('primary' => array('user_id'), 'update' => array_keys($database_field)),
+    $ucf_data_new
+  );
+  return true;
+}
+
+/**
+ * `User Custom Fields` : validate posted fields without saving them
+ *
+ * @param array $ucf_fields the ucf[] part of the POST
+ * @return array|null error array, null when everything is valid
+ */
+function ucf_validate_fields($ucf_fields)
+{
+  global $conf;
+
+  $ucf = $conf['ucf_config']['ucf'];
+  foreach ($ucf_fields as $field)
   {
     if (!isset($field['ucf_id']) OR !isset($field['data']))
     {
@@ -164,22 +201,9 @@ function ucf_save_ucf($ucf_post, $from_register=false)
         'message' => '`'.$ucf[ $current_index_ucf ][ 'wording' ].'` is onlyadmin field'
       );
     }
-
-    $current_column_name = $ucf[ $current_index_ucf ][ 'column_name' ];
-
-    // no escaping: $_POST is already addslashes-ed and mass_updates does not escape
-
-    @$ucf_data_new[$ucf_post['user_id']]['user_id'] = $ucf_post['user_id'];
-    $ucf_data_new[$ucf_post['user_id']][$current_column_name] = $field['data'];
-    $database_field[$current_column_name] = 1;
   }
 
-  mass_updates(
-    USER_INFOS_TABLE,
-    array('primary' => array('user_id'), 'update' => array_keys($database_field)),
-    $ucf_data_new
-  );
-  return true;
+  return null;
 }
 
 function ucf_get_column_type($type)

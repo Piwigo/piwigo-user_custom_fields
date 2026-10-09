@@ -19,7 +19,26 @@ function ucf_profile_save($user_id)
 }
 
 /**
- * save ucf fields in register page 
+ * validate ucf fields before the user is created, so an invalid
+ * registration never creates the account nor sends the mails
+ */
+function ucf_register_check($errors, $user_infos)
+{
+  if (isset($_POST['ucf']))
+  {
+    $result = ucf_validate_fields($_POST['ucf']);
+    if (null !== $result)
+    {
+      // same key as the core password errors, displayed next to the form by standard pages
+      $errors['register_form_error'] = $result['message'];
+    }
+  }
+
+  return $errors;
+}
+
+/**
+ * save ucf fields in register page
  */
 function ucf_register($user)
 {
